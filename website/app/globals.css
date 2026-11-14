@@ -1,0 +1,318 @@
+@import "tailwindcss";
+
+:root {
+  --blue: #123b70;
+  --orange: #f28c28;
+  --light: #f4f7fb;
+  --dark: #172b46;
+}
+
+* {
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--dark);
+  background: white;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.nav {
+  min-height: 75px;
+  padding: 18px 7%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: white;
+  border-bottom: 1px solid #e7edf5;
+}
+
+.logo {
+  font-size: 27px;
+  font-weight: 800;
+  color: var(--blue);
+}
+
+.logo span,
+.hero h1 span {
+  color: var(--orange);
+}
+
+.navLinks {
+  display: flex;
+  gap: 28px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.navButton,
+.primaryButton {
+  display: inline-block;
+  background: var(--orange);
+  color: white;
+  padding: 13px 22px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.hero {
+  background: linear-gradient(120deg, #102f59, #1b528d);
+  color: white;
+  padding: 100px 8%;
+  min-height: 460px;
+}
+
+.heroContent {
+  max-width: 750px;
+}
+
+.eyebrow {
+  color: var(--orange);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.hero h1 {
+  font-size: clamp(38px, 6vw, 62px);
+  line-height: 1.12;
+  margin: 20px 0;
+}
+
+.heroText {
+  max-width: 600px;
+  line-height: 1.8;
+  color: #e2eaf5;
+}
+
+.primaryButton {
+  margin-top: 18px;
+}
+
+.smallText {
+  font-size: 12px;
+  margin-top: 25px;
+  color: #dce7f4;
+}
+
+.heroCard {
+  margin-top: 35px;
+  max-width: 350px;
+  padding: 24px;
+  border-radius: 14px;
+  background: white;
+  color: var(--dark);
+}
+
+.heroIcon {
+  font-size: 38px;
+}
+
+.heroCheck {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.section,
+.howSection {
+  padding: 75px 8%;
+  text-align: center;
+}
+
+.section h2,
+.howSection h2,
+.bookingSection h2 {
+  color: var(--blue);
+  font-size: 34px;
+  margin: 12px 0;
+}
+
+.sectionText {
+  color: #64748b;
+}
+
+.serviceGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  margin-top: 40px;
+  text-align: left;
+}
+
+.serviceCard {
+  padding: 28px;
+  background: white;
+  border: 1px solid #e4eaf2;
+  border-radius: 13px;
+  box-shadow: 0 5px 20px rgba(20, 50, 90, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.serviceCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(20, 50, 90, 0.12);
+}
+
+.serviceIcon {
+  font-size: 35px;
+}
+
+.serviceCard h3 {
+  color: var(--blue);
+}
+
+.serviceCard p {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.learnMore,
+.serviceCard > span:last-child {
+  display: inline-block;
+  margin-top: 12px;
+  color: #d87516;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.howSection {
+  background: var(--light);
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  margin-top: 40px;
+}
+
+.steps > div {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+}
+
+.steps b {
+  color: var(--orange);
+  font-size: 28px;
+}
+
+.steps p {
+  color: #64748b;
+}
+
+.bookingSection {
+  padding: 75px 20px;
+  text-align: center;
+  background: #f8fafc;
+}
+
+.bookingForm {
+  max-width: 520px;
+  margin: 30px auto;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+  background: white;
+  border: 1px solid #e5eaf1;
+  border-radius: 14px;
+  box-shadow: 0 5px 25px rgba(20, 50, 90, 0.06);
+}
+
+.bookingForm label {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--blue);
+}
+
+.bookingForm input,
+.bookingForm select,
+.bookingForm textarea {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #d6deea;
+  border-radius: 7px;
+  font: inherit;
+  background: white;
+}
+
+.bookingForm button {
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  background: var(--orange);
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+footer {
+  padding: 40px 8%;
+  background: #102f59;
+  color: white;
+  text-align: center;
+}
+
+footer .logo {
+  color: white;
+}
+
+footer p {
+  font-size: 13px;
+  color: #d5e0ed;
+}
+
+@media (max-width: 700px) {
+  .nav {
+    flex-wrap: wrap;
+    padding: 16px 5%;
+  }
+
+  .navLinks {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 12px;
+  }
+
+  .navButton {
+    padding: 10px 13px;
+    font-size: 13px;
+  }
+
+  .hero {
+    padding: 65px 6%;
+  }
+
+  .serviceGrid,
+  .steps {
+    grid-template-columns: 1fr;
+  }
+
+  .section,
+  .howSection {
+    padding: 55px 6%;
+  }
+
+  .section h2,
+  .howSection h2,
+  .bookingSection h2 {
+    font-size: 28px;
+  }
+
+  .bookingForm {
+    padding: 20px;
+  }
+}
