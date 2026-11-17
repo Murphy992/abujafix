@@ -42,11 +42,12 @@ return (
   </a>
 
   <div className="navLinks">
-    <a href="#services">Services</a>
-    <a href="#how">How it works</a>
-    <a href="#booking">Book a technician</a>
-    <a href="/technician-register">Become a Technician</a>
-  </div>
+  <a href="#services">Services</a>
+  <a href="#how">How it works</a>
+  <a href="/technicians">Find a Technician</a>
+  <a href="#booking">Book a technician</a>
+  <a href="/technician-register">Become a Technician</a>
+</div> 
 
   <a className="navButton" href="#booking">
     Get Help
