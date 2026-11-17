@@ -37,13 +37,20 @@ window.open(whatsappUrl, "_blank", "noopener,noreferrer");
 return (
 <main>
 <nav className="nav">
-<a href="#" className="logo">Abuja<span>Fix</span></a>
-<div className="navLinks">
-<a href="#services">Services</a>
-<a href="#how">How it works</a>
-<a href="#booking">Book a technician</a>
-</div>
-<a className="navButton" href="#booking">Get Help</a>
+  <a href="#" className="logo">
+    Abuja<span>Fix</span>
+  </a>
+
+  <div className="navLinks">
+    <a href="#services">Services</a>
+    <a href="#how">How it works</a>
+    <a href="#booking">Book a technician</a>
+    <a href="/technician-register">Become a Technician</a>
+  </div>
+
+  <a className="navButton" href="#booking">
+    Get Help
+  </a>
 </nav>
 
   <section className="hero">
