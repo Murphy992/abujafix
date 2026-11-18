@@ -15,15 +15,16 @@ description: string | null;
 status: string;
 };
 
-type Job = {
-id: string;
-customer_name: string;
-phone: string;
-service_category: string;
-location: string;
-description: string | null;
-status: string;
-created_at: string;
+ type Job = {
+  id: string;
+  customer_name: string;
+  phone: string;
+  service_category: string;
+  location: string;
+  description: string | null;
+  status: string;
+  assigned_technician_id: string | null;
+  created_at: string;
 };
 
 export default function AdminPage() {
@@ -157,6 +158,27 @@ if (error) {
 
 setMessage("Customer job status updated successfully.");
 await loadJobs();
+}async function assignTechnician(
+  jobId: string,
+  technicianId: string
+) {
+  setMessage("");
+
+  const { error } = await supabase
+    .from("jobs")
+    .update({
+      assigned_technician_id: technicianId || null,
+      status: technicianId ? "assigned" : "pending",
+    })
+    .eq("id", jobId);
+
+  if (error) {
+    setMessage(error.message);
+    return;
+  }
+
+  setMessage("Technician assignment saved successfully.");
+  await loadJobs();
 }
 
 async function handleLogout() {
@@ -344,7 +366,24 @@ return (
               <p><strong>Location:</strong> {job.location}</p>
               <p><strong>Problem:</strong> {job.description || "Not provided"}</p>
               <p><strong>Status:</strong> {job.status.replace("_", " ")}</p>
-              <p>
+              <p> <label>Assign an approved technician</label>
+
+<select
+  value={job.assigned_technician_id ?? ""}
+  onChange={(e) =>
+    assignTechnician(job.id, e.target.value)
+  }
+>
+  <option value="">No technician assigned</option>
+
+  {technicians
+    .filter((tech) => tech.status === "approved")
+    .map((tech) => (
+      <option key={tech.id} value={tech.id}>
+        {tech.full_name} - {tech.service_category}
+      </option>
+    ))}
+</select>
                 <strong>Submitted:</strong>{" "}
                 {new Date(job.created_at).
                 toLocaleString()}
