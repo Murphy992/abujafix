@@ -27,16 +27,29 @@ const job = {
   status: "pending",
 };
 
-const { error } = await supabase.from("jobs").insert(job);
+const { data: jobId, error } = await supabase.rpc(
+"submit_customer_job",
+{
+p_customer_name: job.customer_name,
+p_phone: job.phone,
+p_service_category: job.service_category,
+p_location: job.location,
+p_description: job.description,
+}
+);
 
 setLoading(false);
 
-if (error) {
-  setError("We could not submit your request. Please try again.");
-  return;
+if (error || !jobId) {
+console.error("Job submission error:", error);
+setError("We could not submit your request. Please try again.");
+return;
 }
 
-setSuccess("Your job request has been submitted successfully!");
+setSuccess(
+'Your request was submitted successfully! Your tracking reference is: ${jobId}'
+);
+
 form.reset();
 }
 

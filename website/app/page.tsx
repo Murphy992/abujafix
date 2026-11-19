@@ -45,9 +45,10 @@ return (
   <a href="#services">Services</a>
   <a href="#how">How it works</a>
   <a href="/technicians">Find a Technician</a>
-  <a href="#booking">Book a technician</a>
+  <a href="/request-service">Request a Technician</a>
+  <a href="/track-job">Track My Job</a>
   <a href="/technician-register">Become a Technician</a>
-</div> 
+</div>  
 
   <a className="navButton" href="#booking">
     Get Help
@@ -62,7 +63,13 @@ return (
         Connect with skilled service professionals for your home
         and business across Abuja, FCT.
       </p>
-      <a className="primaryButton" href="#booking">Book a Service →</a>
+      <a className="primaryButton" href="/request-service">
+  Request a Technician →
+</a>
+
+<a className="primaryButton" href="/track-job">
+  Track My Job →
+</a>
       <p className="smallText">Electrical · Solar · CCTV · Plumbing · AC</p>
     </div>
 
