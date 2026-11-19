@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { FormEvent } from "react";
 import { supabase } from "../../supabase";
 
 type JobTracking = {
@@ -15,25 +16,52 @@ const [job, setJob] = useState<JobTracking | null>(null);
 const [loading, setLoading] = useState(false);
 const [error, setError] = useState("");
 
-async function trackJob(event: React.FormEvent<HTMLFormElement>) {
+async function trackJob(event: FormEvent<HTMLFormElement>) {
 event.preventDefault();
 
 setLoading(true);
 setError("");
 setJob(null);
 
-const { data, error } = await supabase.rpc("track_customer_job", {
-  p_job_id: reference.trim(),
-});
+const jobReference = reference.trim();
 
-setLoading(false);
+const uuidPattern =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-if (error || !data || data.length === 0) {
-  setError("Job not found. Please check your tracking reference.");
+if (!uuidPattern.test(jobReference)) {
+  setError("Please enter a valid tracking reference.");
+  setLoading(false);
   return;
 }
 
-setJob(data[0] as JobTracking);
+try {
+  const { data, error } = await supabase.rpc(
+    "track_customer_job",
+    {
+      p_job_id: jobReference,
+    }
+  );
+
+  if (error) {
+    console.error("Tracking error:", error);
+    setError("Unable to track your job. Please try again.");
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    setError(
+      "Job not found. Please check your tracking reference."
+    );
+    return;
+  }
+
+  setJob(data[0] as JobTracking);
+} catch (err) {
+  console.error("Unexpected tracking error:", err);
+  setError("Something went wrong. Please try again.");
+} finally {
+  setLoading(false);
+}
 }
 
 const statusLabels: Record<string, string> = {
@@ -46,9 +74,12 @@ completed: "Job Completed",
 return (
 <main className="page">
 <section className="card">
-<a href="/" className="back">← AbujaFix Home</a>
+<a href="/" className="back">
+← AbujaFix Home
+</a>
 
     <p className="eyebrow">ABUJAFIX CUSTOMER SERVICES</p>
+
     <h1>Track Your Job</h1>
 
     <p className="intro">
@@ -57,8 +88,10 @@ return (
     </p>
 
     <form onSubmit={trackJob}>
-      <label>Tracking Reference</label>
+      <label htmlFor="reference">Tracking Reference</label>
+
       <input
+        id="reference"
         value={reference}
         onChange={(e) => setReference(e.target.value)}
         placeholder="Enter your job reference"
@@ -75,6 +108,7 @@ return (
     {job && (
       <div className="result">
         <h2>Job Status</h2>
+
         <p className="service">{job.service_category}</p>
 
         <p className="status">
@@ -107,7 +141,7 @@ return (
       padding: 30px;
       background: white;
       border-radius: 16px;
-      box-shadow: 0 5px 25px rgba(0,0,0,.06);
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.06);
     }
 
     .back {
@@ -126,7 +160,9 @@ return (
       margin: 10px 0;
     }
 
-    .intro, .note, .date {
+    .intro,
+    .note,
+    .date {
       color: #64748b;
       line-height: 1.6;
     }
@@ -162,8 +198,7 @@ return (
     }
 
     button:disabled {
-      opacity: .6;
-      cursor: wait;
+      opacity: 0.6;cursor: wait;
     }
 
     .error {
