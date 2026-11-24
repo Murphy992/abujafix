@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -29,7 +29,7 @@ if (loginError) throw loginError;
 if (!data.user) throw new Error("Login could not be completed.");
 
 const fullName =
-  String(data.user.user_metadata?.full_name || "").trim() 
+  String(data.user.user_metadata?.full_name || "").trim() ||
   "AbujaFix Customer";
 
 const phone = String(data.user.user_metadata?.phone || "").trim();
@@ -113,7 +113,7 @@ fontFamily: "Arial, sans-serif",
           fontSize: "27px",
           margin: "0 auto 16px",
         }}>
-          ↗
+          â†—
         </div>
         <h1 style={{ fontSize: "26px", margin: "0 0 9px", fontWeight: 750 }}>
           Welcome Back
@@ -172,7 +172,7 @@ fontFamily: "Arial, sans-serif",
           fontWeight: 700,
           cursor: loading ? "not-allowed" : "pointer",
         }}>
-          {loading ? "Logging In..." : "Log In →"}
+          {loading ? "Logging In..." : "Log In â†’"}
         </button>
       </form>
 
@@ -201,7 +201,7 @@ fontFamily: "Arial, sans-serif",
     </section>
 
     <p style={{ textAlign: "center", color: "#64748b", fontSize: "12px", marginTop: "22px" }}>
-      © {new Date().getFullYear()} AbujaFix. All rights reserved.
+      Â© 2026 AbujaFix. All rights reserved.
     </p>
   </div>
 </main>
