@@ -37,9 +37,7 @@ if (!uuidPattern.test(jobReference)) {
 try {
   const { data, error } = await supabase.rpc(
     "track_customer_job",
-    {
-      p_job_id: jobReference,
-    }
+    { p_job_id: jobReference }
   );
 
   if (error) {
@@ -49,9 +47,7 @@ try {
   }
 
   if (!data || data.length === 0) {
-    setError(
-      "Job not found. Please check your tracking reference."
-    );
+    setError("Job not found. Please check your tracking reference.");
     return;
   }
 
@@ -64,22 +60,21 @@ try {
 }
 }
 
-const statusLabels: Record<string, string> = {
+const statusMessages: Record<string, string> = {
 pending: "Request Received",
 assigned: "Technician Assigned",
-in_progress: "Work In Progress",
+in_progress: "Work in Progress",
 completed: "Job Completed",
 };
+
+const currentStatus = job?.status.toLowerCase() || "";
 
 return (
 <main className="page">
 <section className="card">
-<a href="/" className="back">
-← AbujaFix Home
-</a>
+<a href="/" className="back">← AbujaFix Home</a>
 
     <p className="eyebrow">ABUJAFIX CUSTOMER SERVICES</p>
-
     <h1>Track Your Job</h1>
 
     <p className="intro">
@@ -89,7 +84,6 @@ return (
 
     <form onSubmit={trackJob}>
       <label htmlFor="reference">Tracking Reference</label>
-
       <input
         id="reference"
         value={reference}
@@ -108,11 +102,10 @@ return (
     {job && (
       <div className="result">
         <h2>Job Status</h2>
-
         <p className="service">{job.service_category}</p>
 
         <p className="status">
-          {statusLabels[job.status.toLowerCase()] || job.status}
+          {statusMessages[currentStatus] || job.status}
         </p>
 
         <p className="date">
@@ -134,7 +127,6 @@ return (
       padding: 35px 16px;
       color: #12345a;
     }
-
     .card {
       max-width: 620px;
       margin: auto;
@@ -143,40 +135,31 @@ return (
       border-radius: 16px;
       box-shadow: 0 5px 25px rgba(0, 0, 0, 0.06);
     }
-
     .back {
       color: #1264c0;
       text-decoration: none;
     }
-
     .eyebrow {
       color: #1264c0;
       font-weight: bold;
       margin-top: 30px;
     }
-
     h1 {
       font-size: 30px;
       margin: 10px 0;
     }
-
-    .intro,
-    .note,
-    .date {
+    .intro, .note, .date {
       color: #64748b;
       line-height: 1.6;
     }
-
     form {
       display: grid;
       gap: 12px;
       margin-top: 25px;
     }
-
     label {
       font-weight: 600;
     }
-
     input {
       width: 100%;
       box-sizing: border-box;
@@ -185,7 +168,6 @@ return (
       border-radius: 8px;
       font-size: 15px;
     }
-
     button {
       padding: 15px;
       border: none;
@@ -196,34 +178,29 @@ return (
       font-size: 16px;
       cursor: pointer;
     }
-
     button:disabled {
-      opacity: 0.6;cursor: wait;
+      opacity: 0.6;
+      cursor: wait;
     }
-
     .error {
       color: #dc2626;
       font-weight: bold;
       margin-top: 20px;
     }
-
     .result {
       margin-top: 25px;
       padding: 20px;
       background: #f0f7ff;
       border-radius: 10px;
     }
-
     .service {
       font-weight: 600;
     }
-
     .status {
       color: #1264c0;
       font-size: 20px;
       font-weight: bold;
     }
-
     .note {
       margin-top: 25px;
       font-size: 13px;

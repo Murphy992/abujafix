@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { FormEvent } from "react";
 import { supabase } from "../../supabase";
 
 const services = [
@@ -18,9 +19,7 @@ const [loading, setLoading] = useState(false);
 const [success, setSuccess] = useState("");
 const [error, setError] = useState("");
 
-async function handleSubmit(
-event: React.FormEvent<HTMLFormElement>
-) {
+async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 event.preventDefault();
 
 setLoading(true);
@@ -30,32 +29,87 @@ setError("");
 const form = event.currentTarget;
 const data = new FormData(form);
 
-const { error: submitError } = await supabase
-  .from("technicians")
-  .insert({
-    full_name: String(data.get("full_name") || ""),
-    phone: String(data.get("phone") || ""),
-    email: String(data.get("email") || ""),
-    service_category: String(data.get("service") || ""),
-    other_skills: String(data.get("skills") || ""),
-    location: String(data.get("location") || ""),
-    experience_years: Number(data.get("experience") || 0),
-    description: String(data.get("description") || ""),
-    status: "pending",
-  });
+try {
+  // Verify the currently logged-in Supabase Auth user
+  const { data: authData, error: authError } =
+    await supabase.auth.getUser();
 
-setLoading(false);
+  if (authError || !authData.user) {
+    setError(
+      "Please create an account or log in before submitting your technician application."
+    );
+    return;
+  }
 
-if (submitError) {
-  setError(submitError.message);
-  return;
+  const user = authData.user;
+console.log("Technician registration user ID:", user.id);
+console.log("Technician registration email:", user.email);
+  const submittedEmail = String(data.get("email") || "")
+    .trim()
+    .toLowerCase();
+
+  const accountEmail = (user.email || "").trim().toLowerCase();
+
+  // Ensure the form email belongs to the logged-in account
+  if (submittedEmail !== accountEmail) {
+    setError(
+      "The email entered must match your logged-in account email."
+    );
+    return;
+  }
+
+  // Prevent duplicate technician profiles for the same account
+  const { data: existingTechnician, error: checkError } =
+    await supabase
+      .from("technicians")
+      .select("id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+  if (checkError) {
+    setError(checkError.message);
+    return;
+  }
+
+  if (existingTechnician) {
+    setError(
+      "A technician profile already exists for this account."
+    );
+    return;
+  }
+
+  // Create the technician profile linked to the Auth user
+  const { error: submitError } = await supabase
+    .from("technicians")
+    .insert({
+      user_id: user.id,
+      full_name: String(data.get("full_name") || "").trim(),
+      phone: String(data.get("phone") || "").trim(),
+      email: submittedEmail,
+      service_category: String(data.get("service") || ""),
+      other_skills: String(data.get("skills") || "").trim(),
+      location: String(data.get("location") || "").trim(),
+      experience_years: Number(data.get("experience") || 0),
+      description: String(data.get("description") || "").trim(),
+      status: "pending",
+    });
+
+  if (submitError) {
+    setError(submitError.message);
+    return;
+  }
+
+  setSuccess(
+    "Your application has been submitted successfully! AbujaFix will review your details."
+  );
+
+  form.reset();
+} catch (err) {
+  console.error("Technician registration error:", err);
+  setError("Something went wrong. Please try again.");
+} finally {
+  setLoading(false);
 }
-
-setSuccess(
-  "Your application has been submitted successfully! AbujaFix will review your details."
-);
-
-form.reset();
 }
 
 return (
@@ -87,11 +141,12 @@ return (
         placeholder="e.g. 08012345678"
       />
 
-      <label>Email address</label>
+      <label>Email address *</label>
       <input
         name="email"
         type="email"
-        placeholder="Your email address"
+        required
+        placeholder="Your account email address"
       />
 
       <label>Professional service *</label>
@@ -110,7 +165,7 @@ return (
       <input
         name="skills"
         placeholder="List additional skills"
-      />
+        />
 
       <label>Your location in Abuja *</label>
       <input
@@ -177,10 +232,12 @@ return (
       font-size: 30px;
     }
 
-    .intro, .note {
+    .intro,
+    .note {
       color: #64748b;
       line-height: 1.6;
-    } 
+    }
+
     label {
       display: block;
       margin-top: 18px;
@@ -189,7 +246,9 @@ return (
       font-weight: 600;
     }
 
-    input, select, textarea {
+    input,
+    select,
+    textarea {
       width: 100%;
       padding: 13px;
       border: 1px solid #d5deea;
@@ -225,6 +284,7 @@ return (
     .error {
       color: red;
       margin-top: 20px;
+      overflow-wrap: anywhere;
     }
 
     .note {

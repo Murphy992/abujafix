@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { FormEvent } from "react";
 import { supabase } from "../../supabase";
 
 export default function RequestServicePage() {
@@ -8,7 +9,7 @@ const [loading, setLoading] = useState(false);
 const [success, setSuccess] = useState("");
 const [error, setError] = useState("");
 
-async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 event.preventDefault();
 
 setLoading(true);
@@ -24,33 +25,43 @@ const job = {
   service_category: String(data.get("service_category") || ""),
   location: String(data.get("location") || "").trim(),
   description: String(data.get("description") || "").trim(),
-  status: "pending",
 };
 
-const { data: jobId, error } = await supabase.rpc(
-"submit_customer_job",
-{
-p_customer_name: job.customer_name,
-p_phone: job.phone,
-p_service_category: job.service_category,
-p_location: job.location,
-p_description: job.description,
+try {
+  const { data: jobId, error: submitError } = await supabase.rpc(
+    "submit_customer_job",
+    {
+      p_customer_name: job.customer_name,
+      p_phone: job.phone,
+      p_service_category: job.service_category,
+      p_location: job.location,
+      p_description: job.description,
+    }
+  );
+
+  if (submitError) {
+    console.error("Job submission error:", submitError);
+    setError("We could not submit your request. Please try again.");
+    return;
+  }
+
+  if (!jobId || typeof jobId !== "string") {
+    console.error("Invalid tracking reference returned:", jobId);
+    setError("Your request could not be confirmed. Please contact AbujaFix support.");
+    return;
+  }
+
+  setSuccess(
+    `Your request was submitted successfully! Your tracking reference is: ${jobId}`
+  );
+
+  form.reset();
+} catch (err) {
+  console.error("Unexpected job submission error:", err);
+  setError("Something went wrong. Please try again.");
+} finally {
+  setLoading(false);
 }
-);
-
-setLoading(false);
-
-if (error || !jobId) {
-console.error("Job submission error:", error);
-setError("We could not submit your request. Please try again.");
-return;
-}
-
-setSuccess(
-'Your request was submitted successfully! Your tracking reference is: ${jobId}'
-);
-
-form.reset();
 }
 
 return (
@@ -66,45 +77,28 @@ return (
 
     <form onSubmit={handleSubmit}>
       <label>Your full name</label>
-      <input
-        name="customer_name"
-        placeholder="Enter your full name"
-        required
-      />
+      <input name="customer_name" placeholder="Enter your full name" required />
 
       <label>Phone number</label>
-      <input
-        name="phone"
-        type="tel"
-        placeholder="e.g. 08012345678"
-        required
-      />
+      <input name="phone" type="tel" placeholder="e.g. 08012345678" required />
 
       <label>Service required</label>
       <select name="service_category" required defaultValue="">
         <option value="" disabled>Choose a service</option>
         <option>Electrical Services</option>
-        <option>Solar & Inverters</option>
-        <option>CCTV & Security</option>
-        <option>Networking & Fibre</option>
+        <option>Solar &amp; Inverters</option>
+        <option>CCTV &amp; Security</option>
+        <option>Networking &amp; Fibre</option>
         <option>Plumbing</option>
         <option>AC Services</option>
         <option>Other</option>
       </select>
 
       <label>Your location in Abuja</label>
-      <input
-        name="location"
-        placeholder="e.g. Gwarinpa, Wuse, Lugbe"
-        required
-      />
+      <input name="location" placeholder="e.g. Gwarinpa, Wuse, Lugbe" required />
 
       <label>Describe the problem</label>
-      <textarea
-        name="description"
-        placeholder="Explain what needs fixing..."
-        rows={5}
-      />
+      <textarea name="description" placeholder="Explain what needs fixing..." rows={5} />
 
       <button type="submit" disabled={loading}>
         {loading ? "Submitting..." : "Submit Job Request"}
@@ -126,7 +120,6 @@ return (
       padding: 35px 16px;
       color: #12345a;
     }
-
     .formCard {
       max-width: 620px;
       margin: auto;
@@ -135,39 +128,12 @@ return (
       border-radius: 16px;
       box-shadow: 0 5px 25px rgba(0,0,0,.06);
     }
-
-    .back {
-      color: #1264c0;
-      text-decoration: none;
-    }
-
-    .eyebrow {
-      color: #1264c0;
-      font-weight: bold;
-      margin-top: 30px;
-    }
-
-    h1 {
-      font-size: 30px;
-      margin: 10px 0;
-    }
-
-    .intro, .note {
-      color: #64748b;
-      line-height: 1.6;
-    }
-
-    form {
-      display: grid;
-      gap: 10px;
-      margin-top: 25px;
-    }
-
-    label {
-      font-weight: 600;
-      margin-top: 8px;
-    }
-
+    .back { color: #1264c0; text-decoration: none; }
+    .eyebrow { color: #1264c0; font-weight: bold; margin-top: 30px; }
+    h1 { font-size: 30px; margin: 10px 0; }
+    .intro, .note { color: #64748b; line-height: 1.6; }
+    form { display: grid; gap: 10px; margin-top: 25px; }
+    label { font-weight: 600; margin-top: 8px; }
     input, select, textarea {
       width: 100%;
       box-sizing: border-box;
@@ -178,7 +144,6 @@ return (
       background: white;
       color: #12345a;
     }
-
     button {
       margin-top: 15px;
       padding: 15px;
@@ -190,28 +155,10 @@ return (
       font-size: 16px;
       cursor: pointer;
     }
-
-    button:disabled {
-    opacity: .6;
-      cursor: wait;
-    }
-
-    .success {
-      color: #15803d;
-      font-weight: bold;
-      margin-top: 20px;
-    }
-
-    .error {
-      color: #dc2626;
-      font-weight: bold;
-      margin-top: 20px;
-    }
-
-    .note {
-      margin-top: 20px;
-      font-size: 13px;
-    }
+    button:disabled { opacity: .6; cursor: wait; }
+    .success { color: #15803d; font-weight: bold; margin-top: 20px; overflow-wrap: anywhere; }
+    .error { color: #dc2626; font-weight: bold; margin-top: 20px; }
+    .note { margin-top: 20px; font-size: 13px; }
   `}</style>
 </main>
 );
