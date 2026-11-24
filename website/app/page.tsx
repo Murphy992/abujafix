@@ -48,7 +48,9 @@ return (
   <a href="/request-service">Request a Technician</a>
   <a href="/track-job">Track My Job</a>
   <a href="/technician-register">Become a Technician</a>
-</div>  
+  <a href="/customer-login">Customer Login</a>
+  <a href="/customer-register">Create Customer Account</a>
+</div>
 
   <a className="navButton" href="#booking">
     Get Help
